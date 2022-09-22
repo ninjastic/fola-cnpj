@@ -1,4 +1,4 @@
-import {  checarEmpresa, gerarLinkEmpresa, procurarEmpresas } from './utils'
+import {  checarEmpresa, gerarLinkEmpresa, gerarLinkBusca, procurarEmpresas } from './utils'
 import { prompt } from 'enquirer';
 
 (async () => {
@@ -20,10 +20,13 @@ import { prompt } from 'enquirer';
         const resultadosSemNumero = resultados.filter(resultado => !resultado.numeros.length);
         const resultadosSemSocios = resultados.filter(resultado => !resultado.socios.length);
 
+        console.log('---');
+
         if (resultadosFiltrados.length) {
             console.log(resultadosFiltrados);
         }
 
+        console.log('Link busca:', gerarLinkBusca(perguntas.nome))
         console.log('[X] Resultados sem número:', resultadosSemNumero.length);
         console.log('[X] Resultados sem sócios:', resultadosSemSocios.length);
         console.log('[OK] Resultados com NÚMERO e SÓCIOS:', resultadosFiltrados.length);

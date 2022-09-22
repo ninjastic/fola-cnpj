@@ -6,8 +6,12 @@ export const gerarLinkEmpresa = (empresa: any) => {
         .replaceAll('LTDA', '').replaceAll('&', '').replaceAll('--', '-');
 };
 
+export const gerarLinkBusca = (nome: string) => {
+    return `http://cnpj.info/${nome.replaceAll(' ', '-')}`
+}
+
 export const procurarEmpresas = async (nome: string) => {
-    const response = await axios.post(`http://cnpj.info/${nome.replaceAll(' ', '-')}`);
+    const response = await axios.post(gerarLinkBusca(nome));
     const $ = load(response.data);
 
     const empresas = $('li');
@@ -32,9 +36,16 @@ export const checarEmpresa = async (empresa: any) => {
         return $(el).attr('href')?.match(/tel:[0-9]{11}/);
     }).map(el => $(el).text());
 
-    const socios = [...$('table tbody tr')].filter(el => {
+    let socios = [...$('table tbody tr')].filter(el => {
         return $(el).find('td').html()?.match('CPF');
     }).map(el => $($(el).children('td')[1]).text());
+
+    if (!socios?.length) {
+        const element = [...$('table tr')].find(tr => [...$(tr).find('td')].find(td => $(td).text() === 'Nome'));
+        if (element) {
+            socios = [$(element).children('td:last-child').text()]
+        };
+    }
 
     return { numeros, socios };
 }
